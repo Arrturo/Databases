@@ -1,0 +1,29 @@
+LAB_04
+
+Zad1 
+b)
+alter table walizka drop foreign key walizka_ibfk_1;
+alter table przetwory drop foreign key przetwory_ibfk_1;
+alter table przetwory drop foreign key przetwory_ibfk_2;
+alter table przetwory drop foreign key przetwory_ibfk_3;
+alter table postac modify id_postaci int;
+alter table postac drop foreign key;
+alter table postac drop primary key;
+
+Zad2
+a)
+ alter table postac add column pesel VARCHAR(11) not NULL FIRST;
+ update postac set pesel='21645938741'+id_postaci;
+ alter table postac add primary key(pesel);
+
+b)
+ALTER TABLE postac MODIFY rodzaj enum('wiking','kobieta','ptak','syrena');
+ 
+c)
+ INSERT INTO postac values('21158432017', 8, 'Gertruda Nieszczera', NULL,'Wola','syrena','1920-09-11','18')
+
+Zad3
+a)
+UPDATE postac SET statek='Pierog' WHERE nazwa LIKE '%a%';
+b)
+UPDATE statek SET max_ladownosc=max_ladownosc*0,7 WHERE data_wodowania < '1901-01-01' and data_wodowania >='1801-01-01';
