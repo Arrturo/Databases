@@ -27,3 +27,76 @@ a)
 UPDATE postac SET statek='Pierog' WHERE nazwa LIKE '%a%';
 b)
 UPDATE statek SET max_ladownosc=max_ladownosc*0,7 WHERE data_wodowania < '1901-01-01' and data_wodowania >='1801-01-01';
+c)
+alter table postac add check (wiek<1001);
+insert into postac values('12343256431', '9', 'Geralt', 'kapitan', 'Pierog', 'Ptak', 1783-06-28', '2000');
+
+Zad4
+a)
+Alter table postac modify rodzaj enum('ptak','syrena','wiking','kobieta','waz');
+INSERT INTO postac(pesel,id_postaci,nazwa,rodzaj,data_ur,wiek) values('11111111111','11','Loko','waz','1900-12-12','28');
+
+b)
+
+CREATE TABLE marynarz LIKE postac;
+INSERT INTO marynarz SELECT * FROM postac where statek='Pierog'
+INSERT INTO marynarz SELECT * FROM postac where statek='Wola'
+
+Zad5
+a)
+ UPDATE postac set statek=NULL WHERE rodzaj='wiking';
+b)
+DELETE FROM postac where id_postaci=5;
+c)
+ delete from statek;
+d) 
+ALTER TABLE postac DROP FOREIGN KEY postac_ibfk_1;
+DROP TABLE statek;
+
+e)
+CREATE TABLE zwierz (id int PRIMARY KEY auto_increment, nazwa VARCHAR(30) NOT NULL, wiek SMALLINT UNSIGNED);
+
+f)
+INSERT INTO zwierz select id_postaci,nazwa,wiek from postac WHERE rodzaj='ptak';
+INSERT INTO zwierz select id_postaci,nazwa,wiek from postac WHERE rodzaj='waz';
+
+
+
+LAB 05
+
+Zad1
+
+1.
+ CREATE TABLE ekwipunek select * from wikingowie.ekwipunek;
+2.
+select * from zasob;
+3.
+select * from zasob where rodzaj='jedzenie';
+4.
+SELECT idZasobu, ilosc from ekwipunek where idKreatury IN(1,3,5);
+
+
+Zad 2
+
+1.
+ SELECT * from kreatura where rodzaj!='wiedzma' AND udzwig>=50;
+2.
+ SELECT * from zasob where waga BETWEEN 3 AND 5;
+3.
+ select * from kreatura where nazwa like '%or%' and udzwig between 30 and 70 ;
+
+Zad 3
+1.
+ SELECT * from zasob where month(dataPozyskania) in (7,8);
+
+2.
+ select * from zasob where rodzaj !='':
+
+3.
+select * from zasob where rodzaj='jedzenie' order by waga limit 5;
+
+Zad 4
+1.
+ SELECT distinct rodzaj from zasob;
+2.
+select concat(nazwa,"-",rodzaj) as zlepione from kreatura;
