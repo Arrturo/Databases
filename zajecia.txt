@@ -99,4 +99,36 @@ Zad 4
 1.
  SELECT distinct rodzaj from zasob;
 2.
-select concat(nazwa,"-",rodzaj) as zlepione from kreatura;
+select concat(nazwa,"-",rodzaj) as zlepione from kreatura WHERE rodzaj LIKE 'wi%';
+3.
+SELECT nazwa, ilosc*waga as waga_calkowita from zasob where year(dataPozyskania) between 2000 and 2007;
+
+Zad 5
+1.
+select nazwa,ilosc*waga*0.7 as 'masa wlasciwa',ilosc*waga*0.3 as 'odpady' from zasob ;
+
+2.
+SELECT nazwa from zasob where rodzaj is null;
+
+3.
+SELECT DISTINCT rodzaj FROM zasob WHERE nazwa LIKE 'Ba%' OR nazwa LIKE '%os' ORDER BY rodzaj asc;
+
+
+LAB 06
+
+Zad1
+1.
+select avg(waga) from kreatura where rodzaj='wiking';
+2.
+select rodzaj, avg(waga) as 'srednia Waga', count(nazwa) as 'liczbaKreatur' from kreatura group by rodzaj;
+3.
+select rodzaj, avg(year(current_timestamp)-year(dataUr)) as 'sredni wiek' from kreatura group by rodzaj;
+
+Zad2
+
+1.
+select rodzaj, sum(waga*ilosc) from zasob group by rodzaj;
+2.
+Select nazwa, avg(waga) from zasob group by nazwa having avg(waga)>10 and sum(ilosc)>=4;
+3.
+select rodzaj, count(distinct(nazwa)) from zasob group by rodzaj having sum(ilosc)>1;
