@@ -20,7 +20,7 @@ b)
 ALTER TABLE postac MODIFY rodzaj enum('wiking','kobieta','ptak','syrena');
  
 c)
- INSERT INTO postac values('21158432017', 8, 'Gertruda Nieszczera', NULL,'Wola','syrena','1920-09-11','18')
+INSERT INTO postac values('21158432017', 8, 'Gertruda Nieszczera', NULL,'Wola','syrena','1920-09-11','18')
 
 Zad3
 a)
@@ -132,3 +132,58 @@ select rodzaj, sum(waga*ilosc) from zasob group by rodzaj;
 Select nazwa, avg(waga) from zasob group by nazwa having avg(waga)>10 and sum(ilosc)>=4;
 3.
 select rodzaj, count(distinct(nazwa)) from zasob group by rodzaj having sum(ilosc)>1;
+
+Zad 3.
+1.
+select k.nazwa,e.idZasobu,e.ilosc from kreatura as k inner join ekwipunek e on k.idKreatury=e.idKreatury;
+2.
+select k.nazwa, z.nazwa, e.ilosc from kreatura as k, zasob as z, ekwipunek as e where k.idKreatury=e.idKreatury and z.idZasobu=e.idZasobu;
+3.
+SELECT idKreatury FROM kreatura WHERE idKreatury NOT IN (SELECT idKreatury FROM ekwipunek WHERE idKreatury IS NOT NULL);
+
+Zad 4.
+1.
+select k.nazwa, z.nazwa from kreatura as k natural join ekwipunek e inner join zasob z on e.idZasobu=z.idZasobu where k.dataUr between '1670-01-01' and '1679-12-31' and k.rodzaj='wiking';
+2.
+select k.nazwa,k.dataUr from kreatura as k natural join ekwipunek e inner join zasob z on e.idZasobu=z.idZasobu where z.rodzaj='jedzenie' order by k.dataUr desc limit 5;
+3.
+SELECT concat(k1.nazwa,'-',k2.nazwa) from kreatura k1, kreatura k2 where k1.idKreatury=k2.idKreatury+5;
+
+Zad 5.
+1.
+SELECT k.rodzaj, avg(e.ilosc*z.waga) as srednia from kreatura as k inner join ekwipunek as e inner join zasob as z on k.idKreatury=e.idKreatury and e.idZasobu=z.idZasobu where k.rodzaj NOT IN('malpa', 'waz') group by k.rodzaj having sum(e.ilosc)<30;
+
+
+
+LAB 07
+
+Zad1
+1.
+delete from kreatura; insert into kreatura select * from wikingowie.kreatura;
+create table etapy_wyprawy select * from wikingowie.etapy_wyprawy;
+create table uczestnicy select * from wikingowie.uczestnicy;
+create table wyprawa select * from wikingowie.wyprawa;
+create table sektor select * from wikingowie.sektor;
+
+2.
+SELECT k.nazwa, u.id_uczestnika FROM kreatura as k LEFT JOIN uczestnicy as u ON k.idKreatury=u.id_uczestnika WHERE u.id_uczestnika is NULL;
+3.
+SELECT w.nazwa, SUM(e.ilosc) FROM kreatura as k, wyprawa as w, uczestnicy as u, ekwipunek as e WHERE k.idKreatury=e.idKreatury AND k.idKreatury=u.id_uczestnika AND u.id_wyprawy=w.id_wyprawy GROUP BY w.nazwa;
+
+
+Zad2.
+1.
+Select nazwa group_concat(nazwa separator ' ') from kreatura group by rodzaj;
+2.
+select w.nazwa, count(u.id_uczestnika), group_concat(k.nazwa separator ',') from wyprawa as w, uczestnicy as u, kreatura as k where w.id_wyprawy=u.id_wyprawy and u.id_uczestnika=k.idKreatury order by w.data_rozpoczecia, e.kolejnosc;
+
+Zad3.
+1.
+select id_sektora,count(idEtapu) as odwiedzany from sektor s left join etapy_wyprawy e on e.sektor=s.id_sektora group by id_sektora ;
+2.
+
+
+Zad4.
+1.
+select w.nazwa, sum(length(e.dziennik)) as suma from wyprawa as w, etapy_wyprawy as e where e.idWyprawy=w.id_wyprawy group by nazwa having sum(length(e.dziennik)) < 400;
+2.
