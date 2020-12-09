@@ -62,7 +62,7 @@ INSERT INTO zwierz select id_postaci,nazwa,wiek from postac WHERE rodzaj='waz';
 
 
 
-LAB 05
+LAB_05
 
 Zad1
 
@@ -114,7 +114,7 @@ SELECT nazwa from zasob where rodzaj is null;
 SELECT DISTINCT rodzaj FROM zasob WHERE nazwa LIKE 'Ba%' OR nazwa LIKE '%os' ORDER BY rodzaj asc;
 
 
-LAB 06
+LAB_06
 
 Zad1
 1.
@@ -155,7 +155,7 @@ SELECT k.rodzaj, avg(e.ilosc*z.waga) as srednia from kreatura as k inner join ek
 
 
 
-LAB 07
+LAB_07
 
 Zad1
 1.
@@ -187,3 +187,98 @@ Zad4.
 1.
 select w.nazwa, sum(length(e.dziennik)) as suma from wyprawa as w, etapy_wyprawy as e where e.idWyprawy=w.id_wyprawy group by nazwa having sum(length(e.dziennik)) < 400;
 2.
+
+
+LAB_08
+Zad 1.
+
+1.
+DELIMITER //
+CREATE TRIGGER check_waga
+BEFORE INSERT ON kreatura
+FOR EACH ROW
+BEGIN
+IF NEW.waga < 0
+THEN
+	SET NEW.waga = 0;
+END IF;
+END
+//
+DELIMITER ;
+
+Zad. 2
+
+1.
+
+CREATE TABLE archiwum_wyprawy like wyprawa;
+ALTER TABLE archiwum_wyprawy MODIFY kierownik VARCHAR(20);
+DELIMITER //
+
+CREATE TRIGGER wyprawa_after_delete
+AFTER DELETE ON wyprawa
+FOR EACH ROW
+BEGIN
+INSERT INTO archiwum_wyprawy SELECT w.id_wyprawy, w.nazwa, w.data_rozpoczecia,
+w.data_zakonczenia, k.nazwa
+from wyprawa w, kreatura k
+WHERE w.kierownik=k.idKreatury
+AND w.id_wyprawy=OLD.id_wyprawy;
+END
+//
+DELIMITER ; 
+
+Zad. 3
+1.
+DELIMITER //
+CREATE PROCEDURE eliksir_sily(IN id int)
+BEGIN
+Update kreatura set udzwig = 1.2 * udzwig where idKreatury = id;
+END
+//
+DELIMITER ;
+2.
+DELIMITER //
+CREATE FUNCTION big_text()
+RETURNS tinytext
+BEGIN
+DECLARE wielkie_litery tinytext;
+SELECT Upper(text) INTO @wielkie_litery;
+RETURN @wielkie_litery;
+END //
+DELIMITER ;
+
+Zad.4
+1.
+CREATE TABLE system_alarmowy (id_alarmu INT PRIMARY KEY auto_increment, wiadomosc VARCHAR(125));
+2.
+DELIMITER //
+CREATE TRIGGER wyprawa_alarm
+AFTER UPDATE ON wyprawa
+FOR EACH ROW
+BEGIN
+DECLARE a INT;
+SELECT count(*) INTO a
+FROM etapy_wyprawy ew, kreatura k, wyprawa w, uczestnicy u
+WHERE ew.idWyprawy=w.id_wyprawy AND k.idKreatury=u.id_uczestnika
+AND u.id_wyprawy=w.id_wyprawy
+AND k.nazwa='Tesciowa' AND ew.sektor=7
+AND w.id_wyprawy=NEW.id_wyprawy;
+IF a > 0
+THEN INSERT INTO system_alarmowy VALUES(default, 'UWAGA TESCIOWA');
+
+END IF;
+END;
+//
+DELIMITER ;
+
+Zad5.
+1.
+DELIMITER $$
+CREATE PROCEDURE udzwig(OUT s FLOAT, OUT su FLOAT, OUT max FLOAT)
+BEGIN
+
+SELECT AVG(udzwig), SUM(udzwig), MAX(udzwig) INTO s, su, max from kreatura;
+
+END
+$$
+DELIMITER ;
